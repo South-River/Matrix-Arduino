@@ -265,10 +265,8 @@ void Matrix::eye()
 	{
 		for(int j=0; j<col; j++)
 		{
-			if(i==j)
-				((float*)mat)[i*col+j]=1.f;
-			else
-				((float*)mat)[i*col+j]=0.f;
+	
+			((float*)mat)[i*col+j]=(i==j)?1.f:0.f;
 		}
 	}
 }
