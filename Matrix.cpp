@@ -233,12 +233,17 @@ namespace Matrix
 		return zero(_dim, _dim);
 	}
 
-	Matrix eye(const int& _dim)
+	Matrix eye(const int& _row, const int& _col)
 	{
-		Matrix res(_dim);
+		Matrix res(_row, _col);
 		res.eye();
 
 		return res;
+	}
+
+	Matrix eye(const int& _dim)
+	{	
+		return eye(_dim, _dim);
 	}
 
 	Matrix one(const int& _row, const int& _col)
@@ -305,10 +310,7 @@ namespace Matrix
 		{
 			for(int j=0; j<col; j++)
 			{
-				if(i==j)
-					((float*)mat)[i*col+j]=1.f;
-				else
-					((float*)mat)[i*col+j]=0.f;
+				((float*)mat)[i*col+j]=(i==j)?1.f:0.f;
 			}
 		}
 	}
@@ -483,5 +485,52 @@ namespace Matrix
 				((float*)mat)[(i+_row)*col+(j+_col)] = ((float*)(_mat.mat))[i*_mat.col+j];
 			}
 		}
+	}
+
+	void Matrix::swapRow(const int& _row1, const int& _row2)
+	{
+		if((_row1<0)||(_row2<0)||(_row1>=row)||(_row2>=row))
+		{
+			Serial.println("Swap Row Error!");
+			return;
+		}
+
+		float temp;
+		for(int i=0; i<col; i++)
+		{
+			temp = ((float*)mat)[_row1*col+i];
+			((float*)mat)[_row1*col+i] = ((float*)mat)[_row2*col+i];
+			((float*)mat)[_row2*col+i] = temp;
+		}
+	}
+        
+	void Matrix::swapCol(const int& _col1, const int& _col2)
+	{
+		if((_col1<0)||(_col2<0)||(_col1>=col)||(_col2>=col))
+		{
+			Serial.println("Swap Col Error!");
+			return;
+		}
+
+		float temp;
+		for(int i=0; i<row; i++)
+		{
+			temp = ((float*)mat)[i*col+_col1];
+			((float*)mat)[i*col+_col1] = ((float*)mat)[i*col+_col2];
+			((float*)mat)[i*col+_col2] = temp;
+		}
+	}
+
+	void Matrix::resize(const int& _row, const int& _col)
+	{
+		Matrix new_mat(_row, _col);
+		mat = new_mat.mat;
+		row = new_mat.row;
+		col = new_mat.col;
+	}
+
+	void Matrix::resize(const int& _dim)
+	{
+		resize(_dim, _dim);
 	}
 }

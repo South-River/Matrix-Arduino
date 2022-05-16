@@ -46,22 +46,36 @@ namespace Matrix
         void zero();
         void eye();
         void one();
+    
+    public:
+        Matrix copy();
 
+    public:
         Matrix add(const Matrix& _mat);
         Matrix sub(const Matrix& _mat);
         Matrix multiply(const Matrix& _mat);
-        Matrix scale(const int& k);
-        Matrix transpose();
-        Matrix copy();
         Matrix invert();
 
+    public:
+        Matrix scale(const int& k);
+        Matrix transpose();        
+
+    public:
         Matrix Block(const int& _row, const int& _col, const int& height, const int& width);
         void Block(const int& _row, const int& _col, const Matrix& _mat);
 
-        void print(String label="");
-        
+        void swapRow(const int& _row1, const int& _row2);
+        void swapCol(const int& _col1, const int& _col2);
+
         float at(const unsigned int& _row, const unsigned int& _col);
         float at(const unsigned int& _row, const unsigned int& _col, const float value);
+
+    public:
+        void resize(const int& _row, const int& _col);
+        void resize(const int& _dim);
+        
+    public:
+        void print(String label="");
 
     public:
         float* mat;
@@ -70,6 +84,7 @@ namespace Matrix
 
     Matrix zero(const int& _row, const int& _col);
     Matrix zero(const int& _dim);
+    Matrix eye(const int& _row, const int& _col);
     Matrix eye(const int& _dim);
     Matrix one(const int& _row, const int& _col);
     Matrix one(const int& _dim);
