@@ -35,32 +35,44 @@ void Scale(float* A, const int& dim, float scale);
 //A=A^(-1)
 int Invert(float* A, int dim);
 
-class Matrix
+namespace Matrix
 {
-public:    
-    Matrix(const int& _dim);
-    Matrix(const int& _row, const int& _col);
+    class Matrix
+    {
+    public:    
+        Matrix(const int& _dim);
+        Matrix(const int& _row, const int& _col);
 
-    void zero();
-    void eye();
-    void one();
+        void zero();
+        void eye();
+        void one();
 
-    Matrix add(const Matrix& _mat);
-    Matrix sub(const Matrix& _mat);
-    Matrix multiply(const Matrix& _mat);
-    Matrix scale(const int& k);
-    Matrix transpose();
-    Matrix copy();
-    Matrix invert();
+        Matrix add(const Matrix& _mat);
+        Matrix sub(const Matrix& _mat);
+        Matrix multiply(const Matrix& _mat);
+        Matrix scale(const int& k);
+        Matrix transpose();
+        Matrix copy();
+        Matrix invert();
 
-    void print(String label="");
-    
-    float at(const unsigned int& _row, const unsigned int& _col);
-    float at(const unsigned int& _row, const unsigned int& _col, const float value);
+        Matrix Block(const int& _row, const int& _col, const int& height, const int& width);
+        void Block(const int& _row, const int& _col, const Matrix& _mat);
 
-public:
-    float* mat;
-    int row, col;
-};
+        void print(String label="");
+        
+        float at(const unsigned int& _row, const unsigned int& _col);
+        float at(const unsigned int& _row, const unsigned int& _col, const float value);
+
+    public:
+        float* mat;
+        int row, col;
+    };
+
+    Matrix zero(const int& _row, const int& _col);
+    Matrix zero(const int& _dim);
+    Matrix eye(const int& _dim);
+    Matrix one(const int& _row, const int& _col);
+    Matrix one(const int& _dim);
+}
 
 #endif

@@ -72,7 +72,11 @@ void Multiply(const float* A, const int& A_row, const int& A_col,
               const float* B, const int& B_row, const int& B_col,
               float* C)
 {
-    if(A_col != B_row) return;
+    if(A_col != B_row)
+	{
+		Serial.println("Wrong! A's col should be equal to B's row");
+		return;
+	}
 
     for(int i=0; i<A_row; i++)
     {
@@ -214,160 +218,270 @@ int Invert(float* A, int dim)
 	return 1;
 }
 
-Matrix::Matrix(const int& _row, const int& _col)
+namespace Matrix
 {
-	float* p;
-	p = (float*)malloc(_row*_col*sizeof(float));
-	mat = p;
-	row = _row;
-	col = _col;
-
-	for(int i=0; i<row; i++)
+	Matrix zero(const int& _row, const int& _col)
 	{
-		for(int j=0; j<col; j++)
-		{
-			((float*)mat)[i*col+j]=0.f;
-		}
-	}
-}
+		Matrix res(_row, _col);
+		res.zero();
 
-Matrix::Matrix(const int& _dim)
-{
-	float* p;
-	p = (float*)malloc(_dim*_dim*sizeof(float));
-	mat = p;
-	row = _dim;
-	col = _dim;
-
-	for(int i=0; i<row; i++)
-	{
-		for(int j=0; j<col; j++)
-		{
-			((float*)mat)[i*col+j]=0.f;
-		}
-	}
-}
-
-void Matrix::zero()
-{
-	for(int i=0; i<row; i++)
-	{
-		for(int j=0; j<col; j++)
-		{
-			((float*)mat)[i*col+j]=0.f;
-		}
-	}
-}
-
-void Matrix::eye()
-{
-	for(int i=0; i<row; i++)
-	{
-		for(int j=0; j<col; j++)
-		{
-	
-			((float*)mat)[i*col+j]=(i==j)?1.f:0.f;
-		}
-	}
-}
-
-void Matrix::one()
-{
-	for(int i=0; i<row; i++)
-	{
-		for(int j=0; j<col; j++)
-		{
-			((float*)mat)[i*col+j]=1.f;
-		}
-	}
-}
-
-Matrix Matrix::add(const Matrix& _mat)
-{
-	Matrix res(row,col);
-	Add((float*)mat, (float*)(_mat.mat), row, col, (float*)(res.mat));
-
-	return res;
-}
-
-Matrix Matrix::sub(const Matrix& _mat)
-{
-	Matrix res(row,col);
-	Sub((float*)mat, (float*)(_mat.mat), row, col, (float*)(res.mat));
-
-	return res;
-}
-
-Matrix Matrix::multiply(const Matrix& _mat)
-{
-	Matrix res(row, _mat.col);
-	
-	if(col!=_mat.row)
 		return res;
+	}
 
-	Multiply((float*)mat, row, col, (float*)(_mat.mat), _mat.row, _mat.col, (float*)(res.mat));
-
-	return res;
-}
-
-Matrix Matrix::invert()
-{
-	Matrix res(row, col);
-
-	if(row!=col)
-		return res;
-	
-	for(int i=0; i<row; i++)
+    Matrix zero(const int& _dim)
 	{
-		for(int j=0; j<col; j++)
+		return zero(_dim, _dim);
+	}
+
+	Matrix eye(const int& _dim)
+	{
+		Matrix res(_dim);
+		res.eye();
+
+		return res;
+	}
+
+	Matrix one(const int& _row, const int& _col)
+	{
+		Matrix res(_row, _col);
+		res.one();
+
+		return res;
+	}
+
+	Matrix one(const int& _dim)
+	{
+		return one(_dim,_dim);
+	}
+
+	Matrix::Matrix(const int& _row, const int& _col)
+	{
+		float* p;
+		p = (float*)malloc(_row*_col*sizeof(float));
+		mat = p;
+		row = _row;
+		col = _col;
+
+		for(int i=0; i<row; i++)
 		{
-			res.mat[i*col+j]=mat[i*col+j];
+			for(int j=0; j<col; j++)
+			{
+				((float*)mat)[i*col+j]=0.f;
+			}
 		}
 	}
 
-	Invert((float*)res.mat, row);
+	Matrix::Matrix(const int& _dim)
+	{
+		float* p;
+		p = (float*)malloc(_dim*_dim*sizeof(float));
+		mat = p;
+		row = _dim;
+		col = _dim;
 
-	return res;
-}
+		for(int i=0; i<row; i++)
+		{
+			for(int j=0; j<col; j++)
+			{
+				((float*)mat)[i*col+j]=0.f;
+			}
+		}
+	}
 
-Matrix Matrix::scale(const int& k)
-{
-	Matrix res(row,col);
-	
-	Copy((float*)mat, row, col, (float*)(res.mat));
-	Scale((float*)(res.mat), row, col, k);
+	void Matrix::zero()
+	{
+		for(int i=0; i<row; i++)
+		{
+			for(int j=0; j<col; j++)
+			{
+				((float*)mat)[i*col+j]=0.f;
+			}
+		}
+	}
 
-	return res;
-}
+	void Matrix::eye()
+	{
+		for(int i=0; i<row; i++)
+		{
+			for(int j=0; j<col; j++)
+			{
+				if(i==j)
+					((float*)mat)[i*col+j]=1.f;
+				else
+					((float*)mat)[i*col+j]=0.f;
+			}
+		}
+	}
 
-Matrix Matrix::transpose()
-{
-	Matrix res(row,col);
-	Transpose((float*)mat, row, col, (float*)(res.mat));
+	void Matrix::one()
+	{
+		for(int i=0; i<row; i++)
+		{
+			for(int j=0; j<col; j++)
+			{
+				((float*)mat)[i*col+j]=1.f;
+			}
+		}
+	}
 
-	return res;
-}
+	Matrix Matrix::add(const Matrix& _mat)
+	{
+		Matrix res(row,col);
 
-Matrix Matrix::copy()
-{
-	Matrix res(row, col);
-	Copy((float*)mat, row, col, (float*)(res.mat));
+		if(!((row==_mat.row)&&(col==_mat.col)))
+		{
+			Serial.println("Add Wrong!");
+			return res;
+		}
 
-	return res;
-}
+		Add((float*)mat, (float*)(_mat.mat), row, col, (float*)(res.mat));
 
-void Matrix::print(String label)
-{
-	Print((float*)mat, row, col, label);
-}
+		return res;
+	}
 
-float Matrix::at(const unsigned int& _row, const unsigned int& _col)
-{
-	return ((float*)mat)[_row*col+_col];
-}
+	Matrix Matrix::sub(const Matrix& _mat)
+	{
+		Matrix res(row,col);
 
-float Matrix::at(const unsigned int& _row, const unsigned int& _col, const float value)
-{
-	((float*)mat)[_row*col+_col] = value;
-	return value;
+		if(!((row==_mat.row)&&(col==_mat.col)))
+		{
+			Serial.println("Sub Wrong!");
+			return res;
+		}
+
+		Sub((float*)mat, (float*)(_mat.mat), row, col, (float*)(res.mat));
+
+		return res;
+	}
+
+	Matrix Matrix::multiply(const Matrix& _mat)
+	{
+		Matrix res(row, _mat.col);
+		
+		if(col!=_mat.row)
+		{	
+			Serial.println("Multiply Wrong!");	
+			return res;
+		}
+
+		Multiply((float*)mat, row, col, (float*)(_mat.mat), _mat.row, _mat.col, (float*)(res.mat));
+
+		return res;
+	}
+
+	Matrix Matrix::invert()
+	{
+		Matrix res(row, col);
+
+		if(row!=col)
+		{
+			Serial.println("Invert Wrong!");
+			return res;
+		}
+		for(int i=0; i<row; i++)
+		{
+			for(int j=0; j<col; j++)
+			{
+				res.mat[i*col+j]=mat[i*col+j];
+			}
+		}
+
+		uint8_t status = Invert((float*)res.mat, row);
+
+		(status==1)?(status=1):(Serial.println("Invert fail!"));
+
+		return res;
+	}
+
+	Matrix Matrix::scale(const int& k)
+	{
+		Matrix res(row,col);
+		
+		Copy((float*)mat, row, col, (float*)(res.mat));
+		Scale((float*)(res.mat), row, col, k);
+
+		return res;
+	}
+
+	Matrix Matrix::transpose()
+	{
+		Matrix res(row,col);
+		Transpose((float*)mat, row, col, (float*)(res.mat));
+
+		return res;
+	}
+
+	Matrix Matrix::copy()
+	{
+		Matrix res(row, col);
+		Copy((float*)mat, row, col, (float*)(res.mat));
+
+		return res;
+	}
+
+	void Matrix::print(String label)
+	{
+		Print((float*)mat, row, col, label);
+	}
+
+	float Matrix::at(const unsigned int& _row, const unsigned int& _col)
+	{
+		if((_row<0)||(_row>=row)||(_col<0)||(_col>=col))
+		{
+			Serial.println("At Error");
+			return 0;
+		}
+		
+		return ((float*)mat)[_row*col+_col];
+	}
+
+	float Matrix::at(const unsigned int& _row, const unsigned int& _col, const float value)
+	{
+		if((_row<0)||(_row>=row)||(_col<0)||(_col>=col))
+		{
+			Serial.println("At Error");
+			return 0;
+		}
+
+		((float*)mat)[_row*col+_col] = value;
+		return value;
+	}
+
+	Matrix Matrix::Block(const int& _row, const int& _col, const int& height, const int& width)
+	{
+		Matrix res(height, width);
+
+		if((_row<0)||(_col<0)||(_row+height>=row)||(_col+width>=col))
+		{
+			Serial.println("Block Error!");
+			return res;
+		}
+
+		for(int i=0; i<height; i++)
+		{
+			for(int j=0; j<width; j++)
+			{
+				((float*)(res.mat))[i*width+j]=((float*)mat)[(i+_row)*col+(j+_col)];
+			}
+		}
+
+		return res;
+	}
+
+	void Matrix::Block(const int& _row, const int& _col, const Matrix& _mat)
+	{
+		if((_row<0)||(_col<0)||(_row+height>=row)||(_col+width>=col))
+		{
+			Serial.println("Block Error!");
+			return;
+		}
+
+		for(int i=0; i<_mat.row; i++)
+		{
+			for(int j=0; j<_mat.col; j++)
+			{
+				((float*)mat)[(i+_row)*col+(j+_col)] = ((float*)(_mat.mat))[i*_mat.col+j];
+			}
+		}
+	}
 }
