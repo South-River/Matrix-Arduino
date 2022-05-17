@@ -472,7 +472,7 @@ namespace Matrix
 
 	void Matrix::Block(const int& _row, const int& _col, const Matrix& _mat)
 	{
-		if((_row<0)||(_col<0)||(_row+height>=row)||(_col+width>=col))
+		if((_row<0)||(_col<0)||(_row+_mat.row>=row)||(_col+_mat.col>=col))
 		{
 			Serial.println("Block Error!");
 			return;
@@ -532,5 +532,20 @@ namespace Matrix
 	void Matrix::resize(const int& _dim)
 	{
 		resize(_dim, _dim);
+	}
+
+	Matrix Matrix::operator+(const Matrix& _mat)
+	{
+		return add(_mat);
+	}
+
+	Matrix Matrix::operator-(const Matrix& _mat)
+	{
+		return sub(_mat);
+	}
+
+	Matrix Matrix::operator*(const Matrix& _mat)
+	{
+		return multiply(_mat);
 	}
 }

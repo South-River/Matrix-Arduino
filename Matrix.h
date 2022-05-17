@@ -78,6 +78,11 @@ namespace Matrix
         void print(String label="");
 
     public:
+        Matrix operator+(const Matrix& _mat);
+        Matrix operator-(const Matrix& _mat);
+        Matrix operator*(const Matrix& _mat);
+
+    public:
         float* mat;
         int row, col;
     };
