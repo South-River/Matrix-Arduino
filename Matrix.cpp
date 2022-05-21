@@ -407,7 +407,7 @@ namespace Matrix
 
 	Matrix Matrix::transpose()
 	{
-		Matrix res(row,col);
+		Matrix res(col,row);
 		Transpose((float*)mat, row, col, (float*)(res.mat));
 
 		return res;
