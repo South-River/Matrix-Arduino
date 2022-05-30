@@ -22,12 +22,10 @@ void Print(const float* A, int dim, String label)
 
 void Copy(const float* A, int row, int col, float* B)
 {
-    for(int i=0; i < row; i++)
+	int size = row*col;
+    for(int i=0; i < size; i++)
     {
-        for(int j=0; j<col; j++)
-        {
-            B[i*col+j]=A[i*col+j];
-        }
+        B[i]=A[i];
     }
 }
 
@@ -38,12 +36,10 @@ void Copy(const float* A, int dim, float* B)
 
 void Add(const float* A, const float* B, const int& row, const int& col, float* C)
 {
-    for(int i=0; i<row; i++)
+	int size = row*col;
+    for(int i=0; i<size; i++)
     {
-        for(int j=0; j<col; j++)
-        {
-            C[i*col+j]=A[i*col+j]+B[i*col+j];
-        }
+        C[i]=A[i]+B[i];
     }
 }
 
@@ -54,12 +50,10 @@ void Add(const float* A, const float* B, const int& dim, float* C)
 
 void Sub(const float* A, const float* B, const int& row, const int& col, float* C)
 {
-    for(int i=0; i<row; i++)
+	int size = row*col;
+    for(int i=0; i<size; i++)
     {
-        for(int j=0; j<col; j++)
-        {
-            C[i*col+j]=A[i*col+j]-B[i*col+j];
-        }
+        C[i]=A[i]-B[i];
     }
 }
 
@@ -112,15 +106,13 @@ void Transpose(const float* A, const int& dim, float* B)
     Transpose(A, dim, dim, B);
 }
 
-void Scale(float* A, const int& A_row, const int& A_col, float scale)
+void Scale(float* A, const int& row, const int& col, float scale)
 {
-    for(int i=0; i<A_row; i++)
-    {
-        for(int j=0; j<A_col; j++)
-        {
-            A[i*A_col+j]*=scale;
-        }
-    }
+	int size = row*col;
+	for(int i=0; i<size; i++)
+	{
+		A[i]*=scale;
+	}
 }
 
 void Scale(float* A, const int& dim, float scale)
@@ -267,12 +259,10 @@ namespace Matrix
 		row = _row;
 		col = _col;
 
-		for(int i=0; i<row; i++)
+		int size = row*col;
+		for(int i=0; i<size; i++)
 		{
-			for(int j=0; j<col; j++)
-			{
-				((float*)mat)[i*col+j]=0.f;
-			}
+			((float*)mat)[i]=0.f;
 		}
 	}
 
@@ -284,23 +274,19 @@ namespace Matrix
 		row = _dim;
 		col = _dim;
 
-		for(int i=0; i<row; i++)
+		int size = row*col;
+		for(int i=0; i<size; i++)
 		{
-			for(int j=0; j<col; j++)
-			{
-				((float*)mat)[i*col+j]=0.f;
-			}
+			((float*)mat)[i]=0.f;
 		}
 	}
 
 	void Matrix::zero()
 	{
-		for(int i=0; i<row; i++)
+		int size = row*col;
+		for(int i=0; i<size; i++)
 		{
-			for(int j=0; j<col; j++)
-			{
-				((float*)mat)[i*col+j]=0.f;
-			}
+			((float*)mat)[i]=0.f;
 		}
 	}
 
@@ -317,12 +303,10 @@ namespace Matrix
 
 	void Matrix::one()
 	{
-		for(int i=0; i<row; i++)
+		int size = row*col;
+		for(int i=0; i<size; i++)
 		{
-			for(int j=0; j<col; j++)
-			{
-				((float*)mat)[i*col+j]=1.f;
-			}
+			((float*)mat)[i]=0.f;
 		}
 	}
 
@@ -380,12 +364,11 @@ namespace Matrix
 			Serial.println("Invert Wrong!");
 			return res;
 		}
-		for(int i=0; i<row; i++)
+
+		int size = row*col;
+		for(int i=0; i<size; i++)
 		{
-			for(int j=0; j<col; j++)
-			{
-				res.mat[i*col+j]=mat[i*col+j];
-			}
+			res.mat[i]=mat[i];
 		}
 
 		uint8_t status = Invert((float*)res.mat, row);
@@ -547,5 +530,35 @@ namespace Matrix
 	Matrix Matrix::operator*(const Matrix& _mat)
 	{
 		return multiply(_mat);
+	}
+
+	bool Matrix::operator==(const Matrix& _mat)
+    {
+		if(!((row==_mat.row)&&(col==_mat.col)))
+			return false;		
+
+		int size = col*row;
+		for(int i=0; i<size; i++)
+		{
+			if(((float*)mat)[i] != ((float*)_mat.mat)[i])
+				return false;
+		}
+
+		return true;
+	}
+
+	bool Matrix::operator!=(const Matrix& _mat)
+	{
+		if(!((row==_mat.row)&&(col==_mat.col)))
+			return true;		
+		
+		int size = col*row;
+		for(int i=0; i<size; i++)
+		{
+			if(((float*)mat)[i] != ((float*)_mat.mat)[i])
+				return true;
+		}
+
+		return false;
 	}
 }

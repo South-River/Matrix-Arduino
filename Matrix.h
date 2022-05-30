@@ -29,7 +29,7 @@ void Transpose(const float* A, const int& A_row, const int& A_col, float* B);
 void Transpose(const float* A, const int& dim, float* B);
 
 //A=kA
-void Scale(float* A, const int& A_row, const int& A_col, float scale);
+void Scale(float* A, const int& row, const int& col, float scale);
 void Scale(float* A, const int& dim, float scale);
 
 //A=A^(-1)
@@ -39,9 +39,9 @@ namespace Matrix
 {
     class Matrix
     {
-    public:    
+    public: 
+        Matrix(const int& _row, const int& _col);   
         Matrix(const int& _dim);
-        Matrix(const int& _row, const int& _col);
 
         void zero();
         void eye();
@@ -81,6 +81,9 @@ namespace Matrix
         Matrix operator+(const Matrix& _mat);
         Matrix operator-(const Matrix& _mat);
         Matrix operator*(const Matrix& _mat);
+
+        bool operator==(const Matrix& _mat);
+        bool operator!=(const Matrix& _mat);
 
     public:
         float* mat;
