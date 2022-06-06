@@ -2,17 +2,22 @@
 
 void Print(const float* A, int row, int col, String label)
 {
-    Serial.println();
-    Serial.println(label);
+	String mat_s = "\n";
+	if(label != "")
+	{
+		mat_s += label;
+		mat_s += "\n";
+	}
     for(int i=0; i<row; i++)
     {
         for(int j=0; j<col; j++)
         {
-            Serial.print(A[i*col+j]);
-            Serial.print("\t");
+			mat_s += String(A[i*col+j], 3);
+			mat_s += "\t";
         }
-        Serial.print("\n");
+        mat_s += "\n";
     }
+	Serial.print(mat_s);
 }
 
 void Print(const float* A, int dim, String label)
